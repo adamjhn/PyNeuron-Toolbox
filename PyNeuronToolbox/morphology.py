@@ -520,7 +520,6 @@ def branch_precedence(h):
 
 
 from neuron import h
-from neuron.rxd.morphology import parent, parent_loc
 import json
 
 def morphology_to_dict(sections, outfile=None):
@@ -529,9 +528,10 @@ def morphology_to_dict(sections, outfile=None):
     h.define_shape()
 
     for sec in sections:
-        my_parent = parent(sec)
-        my_parent_loc = -1 if my_parent is None else parent_loc(sec, my_parent)
-        my_parent = -1 if my_parent is None else section_map[my_parent]
+        my_parent_seg = sec.trueparentseg()
+        my_parent = None if not my_parent_seg else my_parent_seg.sec
+        my_parent_loc = -1 if not my_parent_seg else my_parent_seg.x
+        my_parent = -1 if my_parent_seg is None else section_map[my_parent]
         n3d = int(h.n3d(sec=sec))
         result.append({
             'section_orientation': h.section_orientation(sec=sec),
